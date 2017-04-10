@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="dbperformance1" Class="dbperformanceDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=tcp:dbperformance.database.windows.net,1433;Initial Catalog=dbperformance1;Persist Security Info=False;User ID=andrea;MultipleActiveResultSets=False;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False" SettingsObjectName="LinqToSql.Properties.Settings" SettingsPropertyName="dbperformance1ConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Engineers" Member="Engineers">
+    <Type Name="Engineer">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(40)" CanBeNull="true" />
+      <Column Name="Email" Type="System.String" DbType="NVarChar(40)" CanBeNull="true" />
+      <Association Name="Engineer_ReportEngineer" Member="ReportEngineers" ThisKey="Id" OtherKey="Engineer_Id" Type="ReportEngineer" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Reports" Member="Reports">
+    <Type Name="Report">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="StartDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="EndDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="Partner_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Topic_Id" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Report_ReportEngineer" Member="ReportEngineers" ThisKey="Id" OtherKey="Report_Id" Type="ReportEngineer" />
+      <Association Name="Topic_Report" Member="Topic" ThisKey="Topic_Id" OtherKey="Id" Type="Topic" IsForeignKey="true" />
+      <Association Name="Partner_Report" Member="Partner" ThisKey="Partner_Id" OtherKey="Id" Type="Partner" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Topics" Member="Topics">
+    <Type Name="Topic">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="TopicFamilyId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="Topic_Report" Member="Reports" ThisKey="Id" OtherKey="Topic_Id" Type="Report" />
+      <Association Name="TopicFamily_Topic" Member="TopicFamily" ThisKey="TopicFamilyId" OtherKey="Id" Type="TopicFamily" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ReportEngineers" Member="ReportEngineers">
+    <Type Name="ReportEngineer">
+      <Column Name="Report_Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Engineer_Id" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Engineer_ReportEngineer" Member="Engineer" ThisKey="Engineer_Id" OtherKey="Id" Type="Engineer" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+      <Association Name="Report_ReportEngineer" Member="Report" ThisKey="Report_Id" OtherKey="Id" Type="Report" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.TopicFamilies" Member="TopicFamilies">
+    <Type Name="TopicFamily">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Association Name="TopicFamily_Topic" Member="Topics" ThisKey="Id" OtherKey="TopicFamilyId" Type="Topic" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Partners" Member="Partners">
+    <Type Name="Partner">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(40)" CanBeNull="true" />
+      <Association Name="Partner_Report" Member="Reports" ThisKey="Id" OtherKey="Partner_Id" Type="Report" />
+    </Type>
+  </Table>
+  <Function Name="dbo.GetReportsByEngineers" Method="GetReportsByEngineers">
+    <Parameter Name="engName" Type="System.String" DbType="VarChar(40)" />
+    <ElementType Name="GetReportsByEngineersResult">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="StartDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="EndDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="Title" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="TopicName" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="TopicId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="PartnerId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="PartnerName" Type="System.String" DbType="NVarChar(40)" CanBeNull="true" />
+      <Column Name="TopicFamily" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+      <Column Name="EngList" Type="System.String" DbType="NVarChar(MAX)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+  <Function Name="dbo.GetReportsByEngineersFunc" Method="GetReportsByEngineersFunc" IsComposable="true">
+    <Parameter Name="engName" Type="System.String" DbType="VarChar(40)" />
+    <ElementType Name="GetReportsByEngineersFuncResult">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="StartDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="EndDate" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="Title" Type="System.String" DbType="VarChar(100)" CanBeNull="true" />
+    </ElementType>
+  </Function>
+</Database>
